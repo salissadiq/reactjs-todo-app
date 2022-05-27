@@ -1,49 +1,34 @@
-import React, { useState, useEffect } from 'react';
-import { Form, Input, Button } from 'antd';
-import { UserOutlined, LockOutlined } from '@ant-design/icons';
+import React from 'react';
 
-const HorizontalLoginForm = () => {
-  const [form] = Form.useForm();
-  const [, forceUpdate] = useState({}); // To disable submit button at the beginning.
 
-  useEffect(() => {
-    forceUpdate({});
-  }, []);
+export default function Form({addTodo}){
+    const [formData, setFormData] = React.useState({todo:""})
 
-  const onFinish = (values) => {
-    console.log('Finish:', values);
-  };
-
-  return (
-    <Form form={form} name="horizontal_login" layout="inline" onFinish={onFinish}>
-      <Form.Item
-        name="todo"
-        rules={[
-          {
-            required: true,
-            message: 'Please input your todo!',
-          },
-        ]}
-      >
-        <Input prefix={<UserOutlined className="site-form-item-icon" />} placeholder="Todo" />
-      </Form.Item>
-
-      <Form.Item shouldUpdate>
-        {() => (
-          <Button
-            type="primary"
-            htmlType="submit"
-            disabled={
-              !form.isFieldsTouched(true) ||
-              !!form.getFieldsError().filter(({ errors }) => errors.length).length
+    function handleChange(event) {
+        const {name, value} = event.target
+        setFormData(prevFormData=>(
+            {
+                ...prevFormData,
+                [name] : value
+                
             }
-          >
-            Log in
-          </Button>
-        )}
-      </Form.Item>
-    </Form>
-  );
-};
+        ))
+    }
 
-export default () => <HorizontalLoginForm />;
+    function handleAddTodo() {
+        if(!formData.todo) return alert("Todo must not be blank!")
+        addTodo({todo: formData.todo})
+    }
+    return (
+        <div className="form--container">
+            <input 
+                type="text" 
+                name="todo" 
+                className="form-control"
+                onChange={handleChange}
+                value={formData.todo}
+            />
+            <button onClick={handleAddTodo} className="btn"> <i className="fas fa-plus-circle"></i> ADD</button>
+        </div>
+    )
+}
